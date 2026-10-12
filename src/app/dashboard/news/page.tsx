@@ -83,6 +83,26 @@ export default function NewsListPage() {
     }
   };
 
+  const handleToggleBreaking = async (id: string, currentStatus: boolean) => {
+    try {
+      const res = await fetch(`/api/news/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ toggleBreaking: true }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setNews((prev) =>
+          prev.map((item) => (item._id === id ? { ...item, isBreaking: !currentStatus } : item))
+        );
+      } else {
+        alert(data.error || 'Failed to toggle breaking news status.');
+      }
+    } catch (err) {
+      alert('Failed to update breaking status.');
+    }
+  };
+
   const filteredNews = news.filter((item) =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.summary?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -190,12 +210,31 @@ export default function NewsListPage() {
                       </div>
                     </td>
                     <td className="py-3.5 px-6 max-w-md">
-                      <Link
-                        href={`/dashboard/news/edit/${item._id}`}
-                        className="font-bold text-slate-900 hover:text-red-600 line-clamp-1 transition"
-                      >
-                        {item.title}
-                      </Link>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Link
+                          href={`/dashboard/news/edit/${item._id}`}
+                          className="font-bold text-slate-900 hover:text-red-600 line-clamp-1 transition"
+                        >
+                          {item.title}
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleBreaking(item._id, !!item.isBreaking)}
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-extrabold uppercase transition cursor-pointer border ${
+                            item.isBreaking
+                              ? 'bg-red-100 text-red-700 border-red-300 hover:bg-red-200 shadow-2xs'
+                              : 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 opacity-60 hover:opacity-100'
+                          }`}
+                          title={item.isBreaking ? 'Click to remove from Breaking News Slider' : 'Click to add to Breaking News Slider'}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              item.isBreaking ? 'bg-red-600 animate-ping' : 'bg-slate-400'
+                            }`}
+                          ></span>
+                          <span>{item.isBreaking ? 'Breaking (Active)' : '+ Add Breaking'}</span>
+                        </button>
+                      </div>
                       <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
                         {item.summary}
                       </p>

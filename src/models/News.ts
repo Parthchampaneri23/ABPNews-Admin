@@ -16,6 +16,7 @@ export interface INews extends Document {
   timeAgo?: string;
   isFeatured: boolean;
   isTrending: boolean;
+  isBreaking?: boolean;
   status: 'draft' | 'published' | 'archived';
   views: number;
   // SEO Friendly Fields
@@ -48,6 +49,7 @@ const NewsSchema: Schema = new Schema(
     timeAgo: { type: String, default: 'Just now' },
     isFeatured: { type: Boolean, default: false },
     isTrending: { type: Boolean, default: false },
+    isBreaking: { type: Boolean, default: false },
     status: { type: String, enum: ['draft', 'published', 'archived'], default: 'published' },
     views: { type: Number, default: 0 },
     // SEO Schema Properties

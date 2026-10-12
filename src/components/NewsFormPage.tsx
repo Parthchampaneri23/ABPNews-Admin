@@ -61,6 +61,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
   );
   const [isFeatured, setIsFeatured] = useState(false);
   const [isTrending, setIsTrending] = useState(false);
+  const [isBreaking, setIsBreaking] = useState(false);
   const [status, setStatus] = useState<'published' | 'draft' | 'archived'>('published');
 
   // SEO Friendly Fields
@@ -149,6 +150,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
         setPublishedDate(n.publishedDate || new Date().toISOString().split('T')[0]);
         setIsFeatured(n.isFeatured || false);
         setIsTrending(n.isTrending || false);
+        setIsBreaking(n.isBreaking || false);
         setStatus(n.status || 'published');
 
         // Populate SEO fields with intelligent fallbacks
@@ -477,6 +479,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
         publishedDate,
         isFeatured,
         isTrending,
+        isBreaking,
         status,
         // SEO Fields
         metaTitle: metaTitle.trim() || `${title.trim()} | Metrotimes`,
@@ -1223,7 +1226,20 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
 
         {/* Flags & Status */}
         <div className="pt-2 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center space-x-6">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+            <label className="inline-flex items-center space-x-2 cursor-pointer bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg border border-red-200 transition">
+              <input
+                type="checkbox"
+                checked={isBreaking}
+                onChange={(e) => setIsBreaking(e.target.checked)}
+                className="w-4 h-4 text-red-600 rounded border-red-300 focus:ring-red-500 accent-red-600"
+              />
+              <span className="text-xs font-bold flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
+                Breaking News Slider
+              </span>
+            </label>
+
             <label className="inline-flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"

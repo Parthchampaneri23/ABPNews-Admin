@@ -42,6 +42,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       publishedDate,
       isFeatured,
       isTrending,
+      isBreaking,
       status,
       metaTitle,
       metaDescription,
@@ -52,6 +53,20 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       ogDescription,
       ogImage,
     } = body;
+
+    await connectDB();
+
+    const existingNews = await News.findById(id);
+    if (!existingNews) {
+      return NextResponse.json({ error: 'News article not found.' }, { status: 404 });
+    }
+
+    // Support toggle/partial updates
+    if (body.toggleBreaking !== undefined) {
+      existingNews.isBreaking = !existingNews.isBreaking;
+      await existingNews.save();
+      return NextResponse.json({ success: true, news: existingNews });
+    }
 
     if (!title || typeof title !== 'string' || title.trim().length < 5) {
       return NextResponse.json({ error: 'Title must be at least 5 characters long.' }, { status: 400 });
@@ -68,8 +83,6 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!image) {
       return NextResponse.json({ error: 'An Image path is required.' }, { status: 400 });
     }
-
-    await connectDB();
 
     let slug = slugify(title);
     const existingSlug = await News.findOne({ slug, _id: { $ne: id } });
@@ -122,6 +135,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         publishedDate: publishedDate || new Date().toISOString().split('T')[0],
         isFeatured: !!isFeatured,
         isTrending: !!isTrending,
+        isBreaking: !!isBreaking,
         status: status || 'published',
         metaTitle: finalMetaTitle,
         metaDescription: finalMetaDesc,
