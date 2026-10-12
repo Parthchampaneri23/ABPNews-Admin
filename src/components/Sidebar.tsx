@@ -12,7 +12,8 @@ import {
   ShieldAlert,
   Globe,
   UserCheck,
-  Sliders
+  Sliders,
+  Video
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -58,6 +59,7 @@ export default function Sidebar({ user }: SidebarProps) {
     { label: 'Category & Sub-Category', href: '/dashboard/categories', icon: FolderTree },
     { label: 'All News Articles', href: '/dashboard/news', icon: Newspaper },
     { label: 'Create News Article', href: '/dashboard/news/create', icon: PlusCircle },
+    { label: 'Video Management', href: '/dashboard/videos', icon: Video },
     { label: 'Logo & Favicon Manage', href: '/dashboard/logo-favicon', icon: Sliders },
   ];
 
