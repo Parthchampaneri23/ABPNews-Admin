@@ -276,10 +276,10 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
           now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
         );
       } else if (!silent) {
-        setError(data.message || 'Failed to load live ANI feed');
+        setError(data.message || 'Failed to load live feed');
       }
     } catch (err) {
-      if (!silent) setError('Failed to connect to ANI news service');
+      if (!silent) setError('Failed to connect to live news service');
     } finally {
       if (!silent) setLoadingFeed(false);
     }
@@ -297,7 +297,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
   const handleFetchFromUrl = async (targetUrl?: string) => {
     const urlToFetch = targetUrl || aniUrlInput.trim();
     if (!urlToFetch) {
-      setError('Please provide a valid ANI news article URL.');
+      setError('Please provide a valid news article URL.');
       return;
     }
 
@@ -454,7 +454,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
     }
 
     if (!image) {
-      setError('Please upload a main news article image or fetch from live ANI link.');
+      setError('Please upload a main news article image or fetch from live website.');
       return;
     }
 
@@ -550,7 +550,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
               {isEdit ? 'Edit News Article' : 'Create New Article'}
             </h1>
             <p className="text-sm text-slate-500 mt-0.5">
-              Fill all required news details, fetch live data from ANI website, or upload media locally.
+              Fill all required news details, fetch live data from live website, or upload media locally.
             </p>
           </div>
         </div>
@@ -575,7 +575,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Direct from official <span className="text-slate-800 font-mono font-semibold">aninews.in</span>. Auto-refreshes when new articles are published on ANI. Click any article to load complete content &amp; SEO.
+                  Direct from live website. Auto-refreshes when new articles are published. Click any article to load complete content &amp; SEO.
                 </p>
               </div>
             </div>
@@ -585,7 +585,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
                 type="button"
                 onClick={() => setShowAllNewsModal(true)}
                 className="flex items-center space-x-1.5 px-3 py-1.5 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg text-xs font-bold transition shadow-sm cursor-pointer"
-                title="Browse and search all live articles from ANI"
+                title="Browse and search all live articles"
               >
                 <Eye className="w-3.5 h-3.5 text-white" />
                 <span>View All Live News ({feedArticles.length})</span>
@@ -613,7 +613,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
           {loadingFeed && feedArticles.length === 0 ? (
             <div className="py-8 flex flex-col items-center justify-center space-y-2 text-slate-500 text-xs">
               <RefreshCw className="w-6 h-6 animate-spin text-red-600" />
-              <span>Connecting to ANI live news stream...</span>
+              <span>Connecting to live news stream...</span>
             </div>
           ) : feedArticles.length === 0 ? (
             <div className="py-6 text-center text-xs text-slate-500 bg-slate-50 rounded-xl border border-slate-200">
@@ -656,7 +656,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
                           )}
                           <span className="text-[10px] text-slate-500 flex items-center gap-1 font-medium">
                             <Zap className="w-3 h-3 text-amber-500" />
-                            Live on ANI
+                            Live on Website
                           </span>
                         </div>
                         <h4 className="text-xs font-semibold text-slate-800 truncate hover:text-red-600 transition-colors">
@@ -725,13 +725,13 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                    All Live News Articles from ANI Feed
+                    All Live News Articles from Live Feed
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-100 text-red-700 border border-red-200">
                       {feedArticles.length} Live Stories
                     </span>
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Filter or search through all freshly scraped ANI news articles and click &quot;Auto-Fill Article&quot; to import instantly.
+                    Filter or search through all freshly scraped live news articles and click &quot;Auto-Fill Article&quot; to import instantly.
                   </p>
                 </div>
               </div>
@@ -819,7 +819,7 @@ export default function NewsFormPage({ isEdit = false }: NewsFormProps) {
                                 {item.category}
                               </span>
                             )}
-                            <span className="text-[10px] text-slate-500 font-medium">ANI Live Wire</span>
+                            <span className="text-[10px] text-slate-500 font-medium">Live Wire</span>
                           </div>
                           <h4 className="text-xs font-semibold text-slate-800 leading-snug line-clamp-2 hover:text-red-600 transition-colors">
                             {item.title}
