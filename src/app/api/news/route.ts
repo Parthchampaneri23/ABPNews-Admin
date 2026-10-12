@@ -52,7 +52,28 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { title, summary, content, image, categoryId, subCategoryId, author, readTime, publishedDate, isFeatured, isTrending, status } = body;
+    const {
+      title,
+      summary,
+      content,
+      image,
+      categoryId,
+      subCategoryId,
+      author,
+      readTime,
+      publishedDate,
+      isFeatured,
+      isTrending,
+      status,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+      canonicalUrl,
+      schemaScript,
+      ogTitle,
+      ogDescription,
+      ogImage,
+    } = body;
 
     // Field Validations
     if (!title || typeof title !== 'string' || title.trim().length < 5) {
@@ -87,6 +108,32 @@ export async function POST(req: Request) {
       ? content
       : content.split('\n\n').filter((p: string) => p.trim() !== '');
 
+    const finalMetaTitle = metaTitle?.trim() || `${title.trim()} | Metrotimes`;
+    const finalMetaDesc = metaDescription?.trim() || summary.trim();
+    const finalCanonical = canonicalUrl?.trim() || `https://metrotimes.com/news/${slug}`;
+    const finalSchema = schemaScript?.trim() || `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": ${JSON.stringify(title.trim())},
+  "description": ${JSON.stringify(summary.trim())},
+  "image": [${JSON.stringify(image)}],
+  "datePublished": ${JSON.stringify(publishedDate || new Date().toISOString())},
+  "author": {
+    "@type": "Person",
+    "name": ${JSON.stringify(author ? author.trim() : 'Metrotimes Editor')}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Metrotimes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://metrotimes.com/logo1.png"
+    }
+  }
+}
+</script>`;
+
     const newNews = await News.create({
       title: title.trim(),
       slug,
@@ -95,13 +142,21 @@ export async function POST(req: Request) {
       image, // Local image path e.g. /uploads/filename.png
       categoryId,
       subCategoryId: subCategoryId || null,
-      author: author ? author.trim() : 'ABP News Editor',
+      author: author ? author.trim() : 'Metrotimes Editor',
       readTime: readTime ? readTime.trim() : '3 min read',
       publishedDate: publishedDate || new Date().toISOString().split('T')[0],
       timeAgo: 'Just now',
       isFeatured: !!isFeatured,
       isTrending: !!isTrending,
       status: status || 'published',
+      metaTitle: finalMetaTitle,
+      metaDescription: finalMetaDesc,
+      metaKeywords: metaKeywords?.trim() || '',
+      canonicalUrl: finalCanonical,
+      schemaScript: finalSchema,
+      ogTitle: ogTitle?.trim() || finalMetaTitle,
+      ogDescription: ogDescription?.trim() || finalMetaDesc,
+      ogImage: ogImage?.trim() || image,
     });
 
     return NextResponse.json({ success: true, news: newNews }, { status: 201 });

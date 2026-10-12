@@ -68,17 +68,17 @@ async function seed() {
   await connectDB();
 
   // 1. Create Default Admin User
-  const adminEmail = 'admin@abpnews.com';
+  const adminEmail = 'admin@metrotimes.com';
   const existingUser = await User.findOne({ email: adminEmail });
   if (!existingUser) {
     const passwordHash = await bcrypt.hash('admin123', 10);
     await User.create({
-      name: 'ABP Admin',
+      name: 'Metrotimes Admin',
       email: adminEmail,
       passwordHash,
       role: 'admin',
     });
-    console.log('✅ Admin user created: admin@abpnews.com / admin123');
+    console.log('✅ Admin user created: admin@metrotimes.com / admin123');
   } else {
     console.log('ℹ️ Admin user already exists.');
   }

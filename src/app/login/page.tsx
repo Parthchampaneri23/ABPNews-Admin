@@ -54,11 +54,11 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl p-8 backdrop-blur-sm z-10">
         {/* Brand Header */}
         <div className="text-center mb-8 flex flex-col items-center">
-          <div className="mb-4 bg-slate-950/80 p-3 rounded-2xl border border-slate-800 shadow-xl inline-block">
+          <div className="mb-4 bg-white px-5 py-2.5 rounded-xl border border-slate-200/50 shadow-md inline-block">
             <img
-              src="/logo1.png"
+              src="/logoupdate.png"
               alt="Metrotimes Logo"
-              className="h-12 w-auto object-contain drop-shadow-md"
+              className="h-8 w-auto object-contain"
             />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight">
@@ -75,7 +75,7 @@ export default function LoginPage() {
             <ShieldCheck className="w-4 h-4" />
             <span>Default Seed Credentials:</span>
           </div>
-          <p><span className="text-slate-400">Email:</span> admin@metrotimes.com (or admin@abpnews.com)</p>
+          <p><span className="text-slate-400">Email:</span> admin@metrotimes.com</p>
           <p><span className="text-slate-400">Password:</span> admin123</p>
         </div>
 

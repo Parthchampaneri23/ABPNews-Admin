@@ -30,7 +30,28 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const body = await req.json();
-    const { title, summary, content, image, categoryId, subCategoryId, author, readTime, publishedDate, isFeatured, isTrending, status } = body;
+    const {
+      title,
+      summary,
+      content,
+      image,
+      categoryId,
+      subCategoryId,
+      author,
+      readTime,
+      publishedDate,
+      isFeatured,
+      isTrending,
+      status,
+      metaTitle,
+      metaDescription,
+      metaKeywords,
+      canonicalUrl,
+      schemaScript,
+      ogTitle,
+      ogDescription,
+      ogImage,
+    } = body;
 
     if (!title || typeof title !== 'string' || title.trim().length < 5) {
       return NextResponse.json({ error: 'Title must be at least 5 characters long.' }, { status: 400 });
@@ -60,6 +81,32 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       ? content
       : content.split('\n\n').filter((p: string) => p.trim() !== '');
 
+    const finalMetaTitle = metaTitle?.trim() || `${title.trim()} | Metrotimes`;
+    const finalMetaDesc = metaDescription?.trim() || summary.trim();
+    const finalCanonical = canonicalUrl?.trim() || `https://metrotimes.com/news/${slug}`;
+    const finalSchema = schemaScript?.trim() || `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": ${JSON.stringify(title.trim())},
+  "description": ${JSON.stringify(summary.trim())},
+  "image": [${JSON.stringify(image)}],
+  "datePublished": ${JSON.stringify(publishedDate || new Date().toISOString())},
+  "author": {
+    "@type": "Person",
+    "name": ${JSON.stringify(author ? author.trim() : 'Metrotimes Editor')}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Metrotimes",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://metrotimes.com/logo1.png"
+    }
+  }
+}
+</script>`;
+
     const updatedNews = await News.findByIdAndUpdate(
       id,
       {
@@ -70,12 +117,20 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         image,
         categoryId,
         subCategoryId: subCategoryId || null,
-        author: author ? author.trim() : 'ABP News Editor',
+        author: author ? author.trim() : 'Metrotimes Editor',
         readTime: readTime ? readTime.trim() : '3 min read',
         publishedDate: publishedDate || new Date().toISOString().split('T')[0],
         isFeatured: !!isFeatured,
         isTrending: !!isTrending,
         status: status || 'published',
+        metaTitle: finalMetaTitle,
+        metaDescription: finalMetaDesc,
+        metaKeywords: metaKeywords?.trim() || '',
+        canonicalUrl: finalCanonical,
+        schemaScript: finalSchema,
+        ogTitle: ogTitle?.trim() || finalMetaTitle,
+        ogDescription: ogDescription?.trim() || finalMetaDesc,
+        ogImage: ogImage?.trim() || image,
       },
       { new: true }
     );

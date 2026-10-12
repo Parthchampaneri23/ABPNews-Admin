@@ -17,9 +17,32 @@ export default async function DashboardLayout({
     redirect('/login');
   }
 
-  const user = verifyToken(token);
-  if (!user) {
+  const payload = verifyToken(token);
+  if (!payload) {
     redirect('/login');
+  }
+
+  // Fetch updated user from database if possible so profile changes reflect immediately
+  let user: { name: string; email: string; role: string } = {
+    name: payload.name || 'Metrotimes Admin',
+    email: payload.email || 'admin@metrotimes.com',
+    role: payload.role || 'admin',
+  };
+
+  try {
+    const { connectDB } = await import('@/lib/db');
+    const User = (await import('@/models/User')).default;
+    await connectDB();
+    const dbUser = await User.findById(payload.userId).lean();
+    if (dbUser) {
+      user = {
+        name: (dbUser as any).name || user.name,
+        email: (dbUser as any).email || user.email,
+        role: (dbUser as any).role || user.role,
+      };
+    }
+  } catch (e) {
+    // fallback to token payload
   }
 
   return (
