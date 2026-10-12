@@ -15,6 +15,16 @@ export async function GET() {
         logoAltText: 'Metrotimes',
         footerLogoUrl: '/logoupdate.png',
       });
+    } else if (!settings.socialLinks || settings.socialLinks.length === 0) {
+      settings.socialLinks = [
+        { platform: 'facebook', title: 'Facebook', url: 'https://facebook.com', isActive: true, order: 0 },
+        { platform: 'twitter', title: 'Twitter / X', url: 'https://twitter.com', isActive: true, order: 1 },
+        { platform: 'instagram', title: 'Instagram', url: 'https://instagram.com', isActive: true, order: 2 },
+        { platform: 'youtube', title: 'YouTube', url: 'https://youtube.com', isActive: true, order: 3 },
+        { platform: 'whatsapp', title: 'WhatsApp Channel', url: 'https://whatsapp.com', isActive: false, order: 4 },
+        { platform: 'telegram', title: 'Telegram', url: 'https://telegram.org', isActive: false, order: 5 },
+      ] as any;
+      await settings.save();
     }
     return NextResponse.json({ success: true, settings });
   } catch (error: any) {
@@ -28,7 +38,7 @@ export async function GET() {
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
-    const { siteName, tagline, logoUrl, faviconUrl, logoAltText, footerLogoUrl } = body;
+    const { siteName, tagline, logoUrl, faviconUrl, logoAltText, footerLogoUrl, socialLinks } = body;
 
     await connectDB();
     let settings = await SiteSettings.findOne();
@@ -41,6 +51,7 @@ export async function PUT(req: Request) {
         faviconUrl: faviconUrl || '/favicon update.png',
         logoAltText: logoAltText || 'Metrotimes',
         footerLogoUrl: footerLogoUrl || '/logoupdate.png',
+        socialLinks: socialLinks || undefined,
       });
     } else {
       if (siteName !== undefined) settings.siteName = siteName;
@@ -49,6 +60,7 @@ export async function PUT(req: Request) {
       if (faviconUrl !== undefined) settings.faviconUrl = faviconUrl;
       if (logoAltText !== undefined) settings.logoAltText = logoAltText;
       if (footerLogoUrl !== undefined) settings.footerLogoUrl = footerLogoUrl;
+      if (socialLinks !== undefined) settings.socialLinks = socialLinks;
       await settings.save();
     }
 
