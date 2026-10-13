@@ -28,11 +28,20 @@ export async function POST(req: Request) {
     const ext = file.name.split('.').pop() || 'png';
     const fileName = `upload_${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${ext}`;
     
+    // 1. Save to Admin public/uploads
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
     await mkdir(uploadDir, { recursive: true });
-
     const filePath = path.join(uploadDir, fileName);
     await writeFile(filePath, buffer);
+
+    // 2. Also save to Website public/uploads (so website works independently without admin)
+    try {
+      const websiteUploadDir = path.join(process.cwd(), '..', 'abpnews-website', 'public', 'uploads');
+      await mkdir(websiteUploadDir, { recursive: true });
+      await writeFile(path.join(websiteUploadDir, fileName), buffer);
+    } catch (copyErr) {
+      console.warn('Could not dual-write image to website directory:', copyErr);
+    }
 
     const publicUrl = `/uploads/${fileName}`;
 
